@@ -1,0 +1,127 @@
+/**
+  * Phaser State Transition Plugin
+  * It adds a little more liveliness to your state changes
+
+	The MIT License (MIT)
+
+	Copyright (c) 2014 Cristian Bote
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+	Contact: https://github.com/cristianbote, @cristianbote_
+
+  */
+
+(function(window, Phaser) {
+	/**
+	  * StateTranistion Plugin for Phaser
+	  */
+	Phaser.Plugin.StateTransition = function (game, parent) {
+		/* Extend the plugin */
+		Phaser.Plugin.call(this, game, parent);
+	};
+
+	//Extends the Phaser.Plugin template, setting up values we need
+	Phaser.Plugin.StateTransition.prototype = Object.create(Phaser.Plugin.prototype);
+	Phaser.Plugin.StateTransition.prototype.constructor = Phaser.Plugin.StateTransition;
+
+	/**
+	  * Calls the _draw method which handles the state changes and transitions
+	  */
+	Phaser.Plugin.StateTransition.prototype.to = function (state, callback) {
+		_draw.call(this, state);
+	};
+
+	Phaser.Plugin.StateTransition.prototype.settings = function (opt) {
+		if (opt) {
+			for(var p in opt) {
+				if (settings[p]) {
+					settings[p] = opt[p];
+				}
+			}
+		} else {
+			return Object.create(settings);
+		}
+	};
+
+	/* Settings object */
+	var settings = {
+		duration: 300, /* ms */
+		ease: Phaser.Easing.Exponential.InOut,
+		properties: {
+			alpha: 0
+		}
+	};
+
+	/* Draw the world state */
+	function _draw(state) {
+		/* If there's a sprite there, destroy it */
+		if (this._cover) {
+			this._cover.destroy();
+		}
+
+		/* If there's no texture create one */
+		if (!this._texture) {
+			this._texture = this.game.add.renderTexture('cover', this.game.width, this.game.height);
+		}
+		/* Draw the current world to the render */
+		this._texture.renderXY(this.game.world, 0, 0, true);
+
+		/* If there's a state as a paramterer change the state and do the dew */
+		if (state) {
+			
+			this.game.state.start(state);
+
+			this._cover = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, this._texture);
+			this._cover.anchor.setTo(0.5, 0.5);
+		}
+
+		/* Animate */
+		if (settings && settings.properties) {
+			for (var p in settings.properties) {
+				if (typeof settings.properties[p] !== "object") {
+					var _dummy = {};
+					_dummy[p] = settings.properties[p];
+					this._tween = this.game.add
+						.tween(this._cover)
+						.to(_dummy,
+							settings.duration,
+							settings.ease, true);
+				} else {
+					this._tween = this.game.add
+						.tween(this._cover[p])
+						.to(settings.properties[p],
+							settings.duration,
+							settings.ease, true);
+				}
+			}
+
+			this._tween.onComplete.addOnce(_destroy, this);
+		}
+	}
+
+	/* Destroy all the data */
+	function _destroy() {
+		this._cover.destroy();
+		this._cover = null;
+		this._texture.destroy();
+		this._texture = null;
+	}
+
+}(window, Phaser));
