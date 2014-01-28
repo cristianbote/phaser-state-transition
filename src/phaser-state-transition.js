@@ -71,6 +71,10 @@
 
 	/* Draw the world state */
 	function _draw(state) {
+
+		/* Pause the game at first */
+		this.game.paused = true;
+
 		/* If there's a sprite there, destroy it */
 		if (this._cover) {
 			this._cover.destroy();
@@ -91,6 +95,9 @@
 			this._cover = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, this._texture);
 			this._cover.anchor.setTo(0.5, 0.5);
 		}
+
+		/* Resume the game */
+		this.game.paused = false;
 
 		/* Animate */
 		if (settings && settings.properties) {
