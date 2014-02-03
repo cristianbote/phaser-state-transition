@@ -48,6 +48,13 @@
 		_draw.call(this, state);
 	};
 
+	/** Can be called in the create function of states that you transition to, to ensure
+	  * that the transition-sprite is on top of everything
+	  */
+	Phaser.Plugin.StateTransition.prototype.bringToTop = function () {
+		_bringCoverToTop.call(this);
+	}
+
 	Phaser.Plugin.StateTransition.prototype.settings = function (opt) {
 		if (opt) {
 			for(var p in opt) {
@@ -69,6 +76,13 @@
 		}
 	};
 
+	/*Move the Texture-Sprite to the top*/
+	function _bringCoverToTop() {
+		if (this._cover) {
+			this._cover.bringToTop();
+		}
+	}
+
 	/* Draw the world state */
 	function _draw(state) {
 
@@ -85,15 +99,16 @@
 			this._texture = this.game.add.renderTexture('cover', this.game.width, this.game.height);
 		}
 		/* Draw the current world to the render */
-		this._texture.renderXY(this.game.world, 0, 0, true);
+		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y, true);
 
 		/* If there's a state as a paramterer change the state and do the dew */
 		if (state) {
 			
 			this.game.state.start(state);
 
-			this._cover = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, this._texture);
-			this._cover.anchor.setTo(0.5, 0.5);
+			this._cover = this.game.add.sprite(game.width / 2, game.height / 2, this._texture);
+			this._cover.anchor.setTo(0.5,0.5);
+			this._cover.fixedToCamera = true;
 		}
 
 		/* Resume the game */
