@@ -48,7 +48,8 @@
 		_draw.call(this, state);
 	};
 
-	/** Can be called in the create function of states that you transition to, to ensure
+	/** 
+	  * Can be called in the create function of states that you transition to, to ensure
 	  * that the transition-sprite is on top of everything
 	  */
 	Phaser.Plugin.StateTransition.prototype.bringToTop = function () {
@@ -76,7 +77,7 @@
 		}
 	};
 
-	/*Move the Texture-Sprite to the top*/
+	/* Move the Texture-Sprite to the top */
 	function _bringCoverToTop() {
 		if (this._cover) {
 			this._cover.bringToTop();
@@ -106,9 +107,13 @@
 			
 			this.game.state.start(state);
 
-			this._cover = this.game.add.sprite(game.width / 2, game.height / 2, this._texture);
-			this._cover.anchor.setTo(0.5,0.5);
+			this._cover = this.game.add.sprite(0, 0, this._texture);
 			this._cover.fixedToCamera = true;
+			this._cover.anchor.setTo(0.5,0.5);
+
+			/* Instead of x/y we need to set the cameraOffset point */
+			this._cover.cameraOffset.x = this.game.width / 2;
+			this._cover.cameraOffset.y = this.game.height / 2;
 		}
 
 		/* Resume the game */
