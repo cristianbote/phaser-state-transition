@@ -1,7 +1,7 @@
 State Transition Plugin for Phaser
 =======================
 
-Plugin for phaser.js(http://phaser.io/) v 1.1.3
+Plugin for phaser.js(http://phaser.io/) v 1.1.4
 
 ## About
 Currently the switch between states is really static and a game should be able to transition between states. Therefore, this plugin does exactly that: draws the `game.world` into a `renderTexture` which is rendered on a `sprite`, and finally it's tweening that sprite.
