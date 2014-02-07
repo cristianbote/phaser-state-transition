@@ -59,7 +59,7 @@
 	Phaser.Plugin.StateTransition.prototype.settings = function (opt) {
 		if (opt) {
 			for(var p in opt) {
-				if (settings[p]) {
+				if (settings.hasOwnProperty(p)) {
 					settings[p] = opt[p];
 				}
 			}
@@ -68,8 +68,10 @@
 		}
 	};
 
-	/* Settings object */
+	/* Default-Settings object */
 	var settings = {
+		useFillColor: false,
+		fillColor: 0x000000,
 		duration: 300, /* ms */
 		ease: Phaser.Easing.Exponential.InOut,
 		properties: {
@@ -99,8 +101,28 @@
 		if (!this._texture) {
 			this._texture = this.game.add.renderTexture('cover', this.game.width, this.game.height);
 		}
+
+	    if (settings.useFillColor) {
+		    /* Create a temp Graphics object */
+		    var tempGraphic = game.add.graphics(0, 0);
+		    /* Fill it in the fillColor */
+		    tempGraphic.beginFill(settings.fillColor);
+		    tempGraphic.lineStyle(1, settings.fillColor, 1);
+		    tempGraphic.drawRect(0, 0, game.width, game.height);
+		    tempGraphic.endFill();
+		    //render it to the texture
+		    this._texture.renderXY(tempGraphic, 0, 0);
+		    /* clear it, so it's not visible in the world */
+		    tempGraphic.clear();
+		}
+
 		/* Draw the current world to the render */
-		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y, true);
+		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y, !settings.useFillColor);
+
+		if (tempGraphic != null) {
+			/* if a tempGraphic has been used, destroy it now */
+			tempGraphic.destroy();
+		}
 
 		/* If there's a state as a paramterer change the state and do the dew */
 		if (state) {
