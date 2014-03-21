@@ -97,28 +97,40 @@
 
 		/* If there's no texture create one */
 		if (!this._texture) {
-			this._texture = this.game.add.renderTexture('cover', this.game.width, this.game.height);
+			this._texture = this.game.add.renderTexture(this.game.width, this.game.height, 'cover');
 		}
 		/* Draw the current world to the render */
-		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y, true);
+		this._texture.renderXY(this.game.stage, -this.game.camera.x, -this.game.camera.y, true);
 
 		/* If there's a state as a paramterer change the state and do the dew */
 		if (state) {
-			
-			this.game.state.start(state);
 
-			this._cover = this.game.add.sprite(0, 0, this._texture);
+			var _create = this.game.state.states[state]['create'], _this = this;
+
+			this._cover = new Phaser.Sprite(this.game, 0, 0, this._texture);
 			this._cover.fixedToCamera = true;
 			this._cover.anchor.setTo(0.5,0.5);
 
 			/* Instead of x/y we need to set the cameraOffset point */
 			this._cover.cameraOffset.x = this.game.width / 2;
 			this._cover.cameraOffset.y = this.game.height / 2;
+
+			this.game.state.states[state]['create'] = function() {
+				_create.call(_this.game.state.states[state]);
+
+				_this.game.add.existing(_this._cover);
+
+				_animateCover.call(_this);
+			}
+
+			this.game.state.start(state);
 		}
 
 		/* Resume the game */
 		this.game.paused = false;
+	}
 
+	function _animateCover() {
 		/* Animate */
 		if (settings && settings.properties) {
 			for (var p in settings.properties) {
@@ -145,9 +157,9 @@
 
 	/* Destroy all the data */
 	function _destroy() {
-		this._cover.destroy();
+		this._cover&&this._cover.destroy();
 		this._cover = null;
-		this._texture.destroy();
+		this._texture&&this._texture.destroy();
 		this._texture = null;
 	}
 
