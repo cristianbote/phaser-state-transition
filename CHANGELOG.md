@@ -1,3 +1,11 @@
+05/30/2014 0.2.2
+=======================
+* RequireJS support
+* Grunt build file
+* Bower support
+
+
+
 02/4/2014 0.2.1
 =======================
 * Changes to the plugin(@jpdev)
