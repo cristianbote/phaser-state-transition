@@ -1,0 +1,21 @@
+{
+  "name": "phaser-state-transition",
+  "version": "0.2.2",
+  "homepage": "https://github.com/cristianbote/phaser-state-transition",
+  "authors": [
+    "cristianbote <cristian.bote@softivison.ro>"
+  ],
+  "description": "State Transition Plugin for Phaser",
+  "main": "build/phaser-state-transition.min.js",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "Phaser",
+    "State",
+    "Transition",
+    "Plugin"
+  ],
+  "license": "MIT"
+}
