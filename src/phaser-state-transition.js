@@ -100,7 +100,7 @@
 			this._texture = new Phaser.RenderTexture(this.game, this.game.width, this.game.height, 'cover');
 		}
 		/* Draw the current world to the render */
-		this._texture.renderXY(this.game.stage, -this.game.camera.x, -this.game.camera.y);
+		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y);
 
 		/* If there's a state as a paramterer change the state and do the dew */
 		if (state) {
