@@ -108,7 +108,8 @@
 		tempGraphic.endFill();
 		/* adding it to the texture before the world render */
 		this._texture.renderXY(tempGraphic, 0, 0);
-		tempGraphic.clear(); //cleanup
+		/* cleanup */
+		tempGraphic.clear();
 
 		/* Draw the current world to the render */
 		this._texture.renderXY(this.game.stage, -this.game.camera.x, -this.game.camera.y);
