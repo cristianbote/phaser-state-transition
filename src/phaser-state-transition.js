@@ -106,7 +106,8 @@
 		tempGraphic.lineStyle(1,this.game.stage.backgroundColor, 1);
 		tempGraphic.drawRect(0, 0, this.game.width, this.game.height);
 		tempGraphic.endFill();
-		this._texture.renderXY(tempGraphic, 0, 0); //adding it to the texture before the world render
+		/* adding it to the texture before the world render */
+		this._texture.renderXY(tempGraphic, 0, 0);
 		tempGraphic.clear(); //cleanup
 
 		/* Draw the current world to the render */
