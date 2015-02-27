@@ -99,6 +99,18 @@
 		if (!this._texture) {
 			this._texture = new Phaser.RenderTexture(this.game, this.game.width, this.game.height, 'cover');
 		}
+
+		/* We want the current background color in the transition, just in case the entire frame isn't covered by sprites. */
+		var tempGraphic = this.game.add.graphics(0, 0);
+		tempGraphic.beginFill(this.game.stage.backgroundColor);
+		tempGraphic.lineStyle(1,this.game.stage.backgroundColor, 1);
+		tempGraphic.drawRect(0, 0, this.game.width, this.game.height);
+		tempGraphic.endFill();
+		/* adding it to the texture before the world render */
+		this._texture.renderXY(tempGraphic, 0, 0);
+		/* cleanup */
+		tempGraphic.clear();
+
 		/* Draw the current world to the render */
 		this._texture.renderXY(this.game.world, -this.game.camera.x, -this.game.camera.y);
 
