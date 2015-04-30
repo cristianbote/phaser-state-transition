@@ -1,3 +1,6 @@
+DEPRECATED FOR NOW
+As an alternative, the best fork out there it's this one https://github.com/aaccurso/phaser-state-transition-plugin
+
 State Transition Plugin for Phaser
 =======================
 
