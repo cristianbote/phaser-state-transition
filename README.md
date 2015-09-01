@@ -1,7 +1,7 @@
 #### 1/09/2015: Exciting news!
 I'll be working on a new version of this plugin. I got my things in order, and I think I can finally start working properly on it. Stay tunned!
 
-DEPRECATED FOR NOW
+#### 30/04/2015 DEPRECATED FOR NOW
 As an alternative, the best fork out there it's this one https://github.com/aaccurso/phaser-state-transition-plugin
 
 State Transition Plugin for Phaser
