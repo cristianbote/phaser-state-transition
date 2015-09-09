@@ -1,15 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>State Transition Plugin</title>
+	<title>Phaser: states</title>
 </head>
-
 <body>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/phaser/2.4.3/phaser.min.js"></script>
+	<script type="text/javascript" src="../dist/phaser-state-transition.min.js"></script>
+	<script type="text/javascript">
+		var gamee,
+			phaserStatePlugin;
 
-	<div id="stage"></div>
+		function init() {
+			return new Phaser.Game(400, 600, Phaser.AUTO, document.body);
+		}
 
-	<script type="text/javascript" src="lib/phaser/phaser.min.js"></script>
-	<script type="text/javascript" src="../build/phaser-state-transition.min.js"></script>
-	<script type="text/javascript" src="src/app.js"></script>
+		// States
+		function StateA(game) {
+
+			this.create = function() {
+				if (!phaserStatePlugin) {
+					phaserStatePlugin = this.game.plugins.add(Phaser.Plugin.StateTransition);
+				}
+
+				this.stage.backgroundColor = '#EEE';
+				var text = this.game.add.text(0, 0, 'State A');
+
+				text.inputEnabled = true;
+
+				text.events.onInputDown.add(function() {
+					game.state.start('play',
+						Phaser.Plugin.StateTransition.Out.SlideBottom,
+						Phaser.Plugin.StateTransition.In.SlideBottom
+					);
+				});
+			}
+		}
+
+		function StateB(game) {
+			var text;
+
+			this.create = function() {
+				this.game.world.setBounds(0, 0, 1920, 1200);
+				this.stage.backgroundColor = '#888';
+
+				text = this.game.add.text(100, 100, 'State B');
+
+				text.inputEnabled = true;
+
+				text.events.onInputDown.add(function() {
+					game.state.start('init',
+						Phaser.Plugin.StateTransition.Out.SlideBottom,
+						Phaser.Plugin.StateTransition.In.SlideBottom
+					);
+				});
+
+				this.game.camera.follow(text);
+			};
+
+			this.update = function() {
+				text.x += 1;
+				text.y += Phaser.Utils.randomChoice(1, -1);
+			};
+		}
+
+		window.addEventListener('DOMContentLoaded', function() {
+			gamee = init();
+			gamee.state.add('init', StateA);
+			gamee.state.add('play', StateB);
+			gamee.state.start('init');
+		});
+	</script>
 </body>
 </html>

@@ -1,0 +1,43 @@
+{
+  "name": "phaser-state-transition",
+  "version": "2.0.0",
+  "description": "Phaser state transition plugin",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cristianbote/phaser-state-transition.git"
+  },
+  "files": [
+    "index.js",
+    "dist/phaser-state-transition.js",
+    "dist/phaser-state-transition.min.js",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "keywords": [
+    "phaser",
+    "state",
+    "transition"
+  ],
+  "scripts": {
+    "test": "./node_modules/.bin/karma start tests/karma.init.js --single-run"
+  },
+  "author": "Cristian Bote <me@cristianbote.ro>",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.0",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-uglify": "^0.9.2",
+    "karma": "^0.13.9",
+    "karma-chai": "^0.1.0",
+    "karma-coverage": "^0.5.2",
+    "karma-mocha": "^0.2.0",
+    "karma-sinon": "^1.0.4",
+    "karma-sinon-chai": "^1.0.0",
+    "karma-spec-reporter": "0.0.20",
+    "mocha": "^2.3.2",
+    "sinon": "^1.16.1"
+  }
+}
