@@ -1,11 +1,9 @@
-// Karma configuration
-// Generated on Wed Mar 18 2015 23:25:33 GMT+0200 (GTB Standard Time)
-
 module.exports = function(config) {
     config.set({
         basePath: '..',
         frameworks: ['mocha', 'chai', 'sinon', 'sinon-chai'],
         files: [
+            'tests/mocks/**/*.js',
             'dist/phaser-state-transition.js',
             'tests/**/*.spec.js'
         ],
