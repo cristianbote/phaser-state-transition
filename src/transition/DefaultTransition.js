@@ -1,8 +1,3 @@
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function(){
 	"use strict";
 

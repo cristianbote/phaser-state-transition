@@ -1,8 +1,3 @@
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function() {
 	"use strict";
 
@@ -10,7 +5,6 @@
 	 * Content Snapshot Class
      * @constructor
      * @name ContentSnapshot
-     * @memberOf PhaserStateTransition.Core
      * @param {object} game Game object instance
      * @param {number} x Offset of x
      * @param {number} y Offset of y

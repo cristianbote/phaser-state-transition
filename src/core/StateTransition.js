@@ -114,7 +114,7 @@
         SlideTop: DefaultTransition({
             props: {
                 y: function(game) {
-                    return game.height
+                    return -game.height
                 }
             }
         }),

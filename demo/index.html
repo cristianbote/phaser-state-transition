@@ -2,72 +2,196 @@
 <html>
 <head>
 	<title>Phaser: states</title>
+    <style>
+        :root,
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            display: block;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
 	<script type="text/javascript" src="../node_modules/phaser/dist/phaser.min.js"></script>
 	<script type="text/javascript" src="../dist/phaser-state-transition.min.js"></script>
 	<script type="text/javascript">
-		var gamee,
-			phaserStatePlugin;
+        /**
+         * Main Game Class
+         * @constructor
+         */
+		function GameClass() {
+            var innerWidth = window.innerWidth,
+                innerHeight = window.innerHeight,
+                dpr = window.devicePixelRatio,
+                gameRatio = innerWidth / innerHeight;
 
-		function init() {
-			return new Phaser.Game(400, 600, Phaser.AUTO, document.body);
+            this.dataCache = {};
+
+            /**
+             * Creates the game
+             * @returns {Phaser.Game}
+             */
+            function createGame() {
+                console.log(innerWidth, innerWidth * dpr, innerWidth / dpr, 400 / gameRatio);
+                return new Phaser.Game(400, 400 / gameRatio, Phaser.AUTO, document.body);
+            }
+
+            /**
+             * Initializes the game
+             */
+            function init() {
+                // Create the game
+                this.game = createGame();
+
+                Phaser.Plugin.StateTransition.call(null, this.game);
+
+                this.game.dataCache = this.dataCache;
+                this.game.state.add('config', GameClass.States.Config);
+                this.game.state.add('intro', GameClass.States.Intro);
+                this.game.state.add('game', GameClass.States.Game);
+                this.game.state.start('config');
+            }
+
+            init.call(this);
 		}
 
-		// States
-		function StateA(game) {
+        /**
+         * Static states holder
+         * @type {object}
+         */
+        GameClass.States = {
 
-			this.create = function() {
-				if (!phaserStatePlugin) {
-					phaserStatePlugin = this.game.plugins.add(Phaser.Plugin.StateTransition);
-				}
+            Config: function(game) {
+                this.preload = function() {
+                    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+                    game.state.start('intro');
+                };
+            },
 
-				this.stage.backgroundColor = '#EEE';
-				var text = this.game.add.text(0, 0, 'State A');
+            /**
+             * First state class
+             * @param game
+             * @constructor
+             */
+            Intro: function(game) {
+                var text = 'Lot\'s of stars!',
+                    centerX = game.width / 2,
+                    centerY = game.height / 2,
+                    textObject;
 
-				text.inputEnabled = true;
+                this.create = function() {
+                    this.stage.backgroundColor = "#F0F0F0";
+                    centerX = game.width / 2;
+                    centerY = game.height / 2;
 
-				text.events.onInputDown.add(function() {
-					game.state.start('play',
-						Phaser.Plugin.StateTransition.Out.SlideBottom,
-						Phaser.Plugin.StateTransition.In.SlideBottom
-					);
-				});
-			}
-		}
+                    textObject = game.add.text(centerX, centerY, text, {
+                        align: 'center',
+                        fill: '#356877',
+                        fontSize: 50
+                    });
+                    textObject.anchor.x = 0.5;
+                    textObject.anchor.y = 0.5;
 
-		function StateB(game) {
-			var text;
+                    textObject = game.add.text(centerX, centerY + textObject.height, 'Tap to start', {
+                        fontSize: 20,
+                        fill: '#999'
+                    });
+                    textObject.anchor.x = 0.5;
+                    textObject.anchor.y = 0.5;
 
-			this.create = function() {
-				this.game.world.setBounds(0, 0, 1920, 1200);
-				this.stage.backgroundColor = '#888';
+                    game.input.onTap.addOnce(function() {
+                        game.state.start('game'
+                                , Phaser.Plugin.StateTransition.Out.SlideTop
+                        );
+                    });
+                };
+            },
 
-				text = this.game.add.text(100, 100, 'State B');
+            Game: function(game) {
+                var stars = [],
+                    score = 0,
+                    star,
+                    i = 0,
+                    l = stars.length,
+                    GRAVITY = 0.98,
+                    txt;
 
-				text.inputEnabled = true;
+                function addStar() {
+                    var s = game.add.image(Math.random() * game.width, -30, 'star');
+                    s.anchor.x = 0.5;
+                    s.anchor.y = 0.5;
+                    s.speed = 0.1 + Math.random() * 1.5;
+                    s.direction = Phaser.Utils.randomChoice(-1, 1);
+                    s.inputEnabled = true;
+                    s.events.onInputDown.addOnce(function(){
+                        score += 1;
+                        stars.splice(stars.indexOf(this), 1);
+                        this.parent.removeChild(this);
+                        this.destroy();
+                        spawn();
+                    }.bind(s));
 
-				text.events.onInputDown.add(function() {
-					game.state.start('init',
-						Phaser.Plugin.StateTransition.Out.SlideBottom,
-						Phaser.Plugin.StateTransition.In.SlideBottom
-					);
-				});
+                    stars.push(s);
+                    l = stars.length;
 
-				this.game.camera.follow(text);
-			};
+                    return s;
+                }
 
-			this.update = function() {
-				text.x += 1;
-				text.y += Phaser.Utils.randomChoice(1, -1);
-			};
-		}
+                this.preload = function() {
+                    game.load.image('star', 'star.png', 32, 32);
+                };
+
+                this.create = function() {
+                    this.stage.backgroundColor = "#999";
+                    stars = [];
+
+                    txt = game.add.text(5, 5, 'Score: ' + score, {
+                        fill: '#FFFFFF',
+                        strokeThickness: 4,
+                        stroke: '#336699'
+                    });
+
+                    spawn();
+                };
+
+                function spawn() {
+                    var rnd = Math.ceil(Math.random() * 10);
+
+                    for(var j = 0; j < rnd; j++) {
+                        addStar();
+                    }
+
+                    txt.bringToTop();
+                }
+
+                function lose() {
+                    game.state.start('intro'
+                            , Phaser.Plugin.StateTransition.Out.SlideBottom
+                            , Phaser.Plugin.StateTransition.In.SlideBottom
+                    );
+                }
+
+                this.update = function() {
+                    i = 0;
+                    for(; i < l; i += 1) {
+                        star = stars[i];
+                        star.y += star.speed * GRAVITY;
+                        star.rotation += game.math.degToRad(star.speed * star.direction);
+
+                        if (star.y > game.height) {
+                            lose();
+                        }
+                    }
+
+                    txt.text = 'Score: ' + score;
+                };
+            }
+        };
 
 		window.addEventListener('DOMContentLoaded', function() {
-			gamee = init();
-			gamee.state.add('init', StateA);
-			gamee.state.add('play', StateB);
-			gamee.state.start('init');
+			new GameClass();
 		});
 	</script>
 </body>

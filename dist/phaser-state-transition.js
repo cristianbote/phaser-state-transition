@@ -1,9 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function() {
 	"use strict";
 
@@ -11,7 +6,6 @@
 	 * Content Snapshot Class
      * @constructor
      * @name ContentSnapshot
-     * @memberOf PhaserStateTransition.Core
      * @param {object} game Game object instance
      * @param {number} x Offset of x
      * @param {number} y Offset of y
@@ -43,11 +37,6 @@
 }());
 
 },{}],2:[function(require,module,exports){
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function() {
 	"use strict";
 
@@ -254,7 +243,7 @@
         SlideTop: DefaultTransition({
             props: {
                 y: function(game) {
-                    return game.height
+                    return -game.height
                 }
             }
         }),
@@ -301,11 +290,6 @@
 }());
 
 },{"./core/Slide":2,"./core/StateManagerStart":3,"./core/StateTransition":4,"./transition/DefaultTransition":6}],6:[function(require,module,exports){
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function(){
 	"use strict";
 
@@ -320,11 +304,6 @@
 }());
 
 },{}],7:[function(require,module,exports){
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function(){
 	"use strict";
 
@@ -333,6 +312,8 @@
 	/**
 	 * Transition Class
      * @constructor
+	 * @name Transition
+     * @param {object} game Game instance
 	 */
 	function Transition(game) {
 		this.game = game;
@@ -340,6 +321,12 @@
 		this._tweens = [];
 	}
 
+    /**
+     * Start the transition with a given target and options
+     * @name start
+     * @param target
+     * @param options
+     */
 	Transition.prototype.start = function(target, options) {
 		var prop,
 			_props = options.props,
@@ -400,6 +387,12 @@
 		}
 	};
 
+    /**
+     * Verify complete state for transition
+     * @param target
+     * @param tween
+     * @private
+     */
 	Transition.prototype._checkForComplete = function(target, tween) {
 		var i = 0,
 			l = this._tweens.length,
@@ -420,21 +413,40 @@
 		}
 	};
 
+    /**
+     * Makes sure, before the transition starts, that we're doing fine
+     * property wise.
+     * @param props
+     * @private
+     */
 	Transition.prototype._prepareTargetForTweening = function(props) {
 		if (props.hasOwnProperty('alpha')) {
 			this.currentTarget.alpha = 0;
 		}
 	};
 
+    /**
+     * Destroy handler
+     * @param target
+     */
 	Transition.prototype.destroy = function(target) {
 		target.destroy();
 	};
 
+    /**
+     * Stop handler
+     */
 	Transition.prototype.stop = function() {
 		this._active = false;
 		this.update();
 	};
 
+    /**
+     * Returns a unique identifier based in Date.now() stamp.
+     * Not that reliable.
+     * @returns {string}
+     * @private
+     */
 	function _getIdentifier() {
 		return Date.now().toString(22).substr(-4, 4);
 	}

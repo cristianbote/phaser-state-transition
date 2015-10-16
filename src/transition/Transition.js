@@ -1,8 +1,3 @@
-/*global
-	Phaser: true
-	window: true
-*/
-
 (function(){
 	"use strict";
 
@@ -11,6 +6,8 @@
 	/**
 	 * Transition Class
      * @constructor
+	 * @name Transition
+     * @param {object} game Game instance
 	 */
 	function Transition(game) {
 		this.game = game;
@@ -18,6 +15,12 @@
 		this._tweens = [];
 	}
 
+    /**
+     * Start the transition with a given target and options
+     * @name start
+     * @param target
+     * @param options
+     */
 	Transition.prototype.start = function(target, options) {
 		var prop,
 			_props = options.props,
@@ -78,6 +81,12 @@
 		}
 	};
 
+    /**
+     * Verify complete state for transition
+     * @param target
+     * @param tween
+     * @private
+     */
 	Transition.prototype._checkForComplete = function(target, tween) {
 		var i = 0,
 			l = this._tweens.length,
@@ -98,21 +107,40 @@
 		}
 	};
 
+    /**
+     * Makes sure, before the transition starts, that we're doing fine
+     * property wise.
+     * @param props
+     * @private
+     */
 	Transition.prototype._prepareTargetForTweening = function(props) {
 		if (props.hasOwnProperty('alpha')) {
 			this.currentTarget.alpha = 0;
 		}
 	};
 
+    /**
+     * Destroy handler
+     * @param target
+     */
 	Transition.prototype.destroy = function(target) {
 		target.destroy();
 	};
 
+    /**
+     * Stop handler
+     */
 	Transition.prototype.stop = function() {
 		this._active = false;
 		this.update();
 	};
 
+    /**
+     * Returns a unique identifier based in Date.now() stamp.
+     * Not that reliable.
+     * @returns {string}
+     * @private
+     */
 	function _getIdentifier() {
 		return Date.now().toString(22).substr(-4, 4);
 	}
