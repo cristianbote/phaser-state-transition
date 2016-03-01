@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<script src="../node_modules/phaser/dist/phaser.min.js"></script>
+<script src="../dist/phaser-state-transition.js"></script>
+<script>
+    function IntroState(game) {
+        this.create = function create() {
+            this.stage.backgroundColor = '#555';
+
+            game.input.onTap.addOnce(function() {
+                game.state.start('mainState',
+                    Phaser.Plugin.StateTransition.Out.SlideTop,
+                    Phaser.Plugin.StateTransition.In.SlideTop
+                );
+            });
+        };
+    }
+
+    function MainState(game) {
+
+        this.create = function create() {
+            this.stage.backgroundColor = '#999';
+
+            game.input.onTap.addOnce(function() {
+                game.state.start('introState',
+                        Phaser.Plugin.StateTransition.Out.SlideTop,
+                        Phaser.Plugin.StateTransition.In.SlideTop
+                );
+            });
+        };
+
+    }
+
+    var game = new Phaser.Game(400, 600, Phaser.AUTO, document.body);
+    game.state.add('introState', IntroState);
+    game.state.add('mainState', MainState);
+    game.state.start('introState');
+</script>
+
+</body>
+</html>

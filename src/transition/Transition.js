@@ -1,7 +1,7 @@
-(function(){
+(function(context){
     "use strict";
 
-    var raf = window.requestAnimationFrame;
+    var raf = context.requestAnimationFrame;
 
     /**
      * Transition Class
@@ -146,4 +146,4 @@
     }
 
     module.exports = Transition;
-}());
+}(this));
