@@ -22,18 +22,18 @@
 
             (function (_state, slideOutOptions, slideInOptions) {
                 _state.create = function () {
-                    _args = Array.prototype.slice(arguments);
+                    _args = [].slice(arguments);
                     _cachedStateCreate.apply(this, _args);
 
                     // Slide in intro
                     if (slideInOptions) {
                         _introSlide = new Slide(this.game);
-                        _stateManager.clearCurrentState();
+                        _stateManager._created = false;
                         _introSlide.go(slideInOptions);
 
                         _introSlide._transition.onComplete = function () {
-                            _cachedStateCreate.apply(this, _args);
-                        }.bind(this);
+                            _stateManager._created = true;
+                        };
                     }
 
                     _slide.go(slideOutOptions);
