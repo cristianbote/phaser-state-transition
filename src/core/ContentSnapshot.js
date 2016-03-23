@@ -17,9 +17,16 @@
         this._graphicFill.drawRect(0, 0, game.width, game.height);
         this._graphicFill.endFill();
 
+        // Add the graphicFill object temporary to the stage at the base
+        game.stage.addChildAt(this._graphicFill, 0);
+
         // Create the game texture
         this._texture = new Phaser.RenderTexture(game, game.width, game.height);
         this._texture.renderXY(this._graphicFill, 0, 0);
+
+        // After this is rendered to the texture, remove it
+        game.stage.removeChild(this._graphicFill);
+
         this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
 
         // Get the image
