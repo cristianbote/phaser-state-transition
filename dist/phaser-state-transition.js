@@ -2,6 +2,8 @@
 (function() {
     "use strict";
 
+    var PHASER_LEGACY = '2.4.8';
+
     /**
      * Content Snapshot Class
      * @constructor
@@ -28,7 +30,12 @@
         // After this is rendered to the texture, remove it
         game.stage.removeChild(this._graphicFill);
 
-        this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
+        // After 2.4.8 (0,0) it's basically middle
+        if (Phaser.VERSION > PHASER_LEGACY) {
+            this._texture.renderXY(game.world, 0, 0);
+        } else {
+            this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
+        }
 
         // Get the image
         Phaser.Image.call(this, game, x || 0, y || 0, this._texture);
