@@ -32,7 +32,7 @@
 
         // After 2.4.8 (0,0) it's basically middle
         if (Phaser.VERSION > PHASER_LEGACY) {
-            this._texture.renderXY(game.world, 0, 0);
+            this._texture.renderXY(game.world, game.camera.position.x * -1, game.camera.position.y * -1);
         } else {
             this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
         }
