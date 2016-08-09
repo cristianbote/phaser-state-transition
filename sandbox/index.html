@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root, html, body {
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<script src="../node_modules/phaser/build/phaser.min.js"></script>
+<script src="../dist/phaser-state-transition.js"></script>
+<script>
+
+    function IntroState(game) {
+        this.create = function create() {
+            this.stage.backgroundColor = 0x0055FF;
+            console.log('blue', this.game.stage.children.length);
+            game.input.onTap.addOnce(function() {
+                game.state.start('mainState',
+                        Phaser.Plugin.StateTransition.Out.SlideRight,
+                        Phaser.Plugin.StateTransition.In.SlideLeft
+                );
+            });
+        };
+    }
+
+    function MainState(game) {
+        this.create = function create() {
+            this.stage.backgroundColor = 0x00FF22;
+            console.log('green', this.game.stage.children.length);
+            game.input.onTap.addOnce(function() {
+                game.state.start('endState',
+                        Phaser.Plugin.StateTransition.Out.SlideLeft,
+                        Phaser.Plugin.StateTransition.In.SlideRight
+                );
+            });
+        };
+    }
+
+    function EndState(game) {
+        this.create = function create() {
+            this.stage.backgroundColor = 0xFF0000;
+            console.log('red', this.game.stage.children.length);
+            game.input.onTap.addOnce(function() {
+                game.state.start('introState',
+                        Phaser.Plugin.StateTransition.Out.SlideTop,
+                        Phaser.Plugin.StateTransition.In.SlideTop
+                );
+            });
+        };
+    }
+
+    var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, document.body);
+    game.state.add('introState', IntroState, true);
+    game.state.add('mainState', MainState);
+    game.state.add('endState', EndState);
+</script>
+</body>
+</html>
