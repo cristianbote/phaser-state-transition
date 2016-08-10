@@ -29,7 +29,7 @@
             _args,
             _cachedStateCreate = _state.create;
 
-        cleanup(_stateManager.game.stage.children);
+        _stateManager.game.stage && cleanup(_stateManager.game.stage.children);
 
         if (_stateManager.game.isBooted && slideOutOptions) {
             _slide = new Slide(this.game);
