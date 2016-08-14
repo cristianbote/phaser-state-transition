@@ -35,16 +35,25 @@
             game.input.onTap.addOnce(function() {
                 game.state.start('endState',
                         Phaser.Plugin.StateTransition.Out.SlideLeft,
-                        Phaser.Plugin.StateTransition.In.SlideRight
+                        Phaser.Plugin.StateTransition.In.SlideRight,
+                        true,
+                        false,
+                        {foo: true},
+                        [0, 1]
                 );
             });
         };
     }
 
     function EndState(game) {
+
+        this.init = function () {
+            console.log('red: init', arguments);
+        };
+
         this.create = function create() {
             this.stage.backgroundColor = 0xFF0000;
-            console.log('red', this.game.stage.children.length);
+            console.log('red', arguments, this.game.stage.children.length);
             game.input.onTap.addOnce(function() {
                 game.state.start('introState',
                         Phaser.Plugin.StateTransition.Out.SlideTop,

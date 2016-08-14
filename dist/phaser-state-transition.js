@@ -116,7 +116,7 @@
             _introSlide,
             _stateManager = this,
             _state = _stateManager.states[stateId],
-            _args,
+            _args = [].slice.call(arguments),
             _cachedStateCreate = _state.create;
 
         _stateManager.game.stage && cleanup(_stateManager.game.stage.children);
@@ -126,8 +126,7 @@
 
             (function (_state, slideOutOptions, slideInOptions) {
                 _state.create = function () {
-                    _args = [].slice(arguments);
-                    _cachedStateCreate.apply(this, _args);
+                    _cachedStateCreate.call(this);
 
                     // Slide in intro
                     if (slideInOptions) {
@@ -149,7 +148,8 @@
             }(_state, slideOutOptions, slideInOptions));
         }
 
-        StateManagerCachedStart.call(this, stateId);
+        // Start the cached state with the params for it
+        StateManagerCachedStart.apply(this, [stateId].concat(_args.slice(3)));
     }
 
     module.exports = StateManagerStart;

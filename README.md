@@ -19,7 +19,7 @@ Since we're talking about v2, there's been some changes. Now, the plugin basical
 
 ```javascript
 
-game.state.start('playState', [outTransition, [inTransition]]);
+game.state.start('playState', [outTransition, [inTransition]], clearWorld, clearCache, parameters);
 ```
 
 Notice the 2 optional params, that are transition config instances. There are several available by default, you should run this: `console.log(Phaser.Plugin.StateTransition.Out);` and `console.log(Phaser.Plugin.StateTransition.In);`. Obviously you could easily add your own nice transition as well.
