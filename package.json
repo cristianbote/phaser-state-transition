@@ -1,6 +1,6 @@
 {
   "name": "phaser-state-transition",
-  "version": "2.2.1",
+  "version": "2.3.1",
   "description": "Phaser state transition plugin",
   "main": "index.js",
   "repository": {
