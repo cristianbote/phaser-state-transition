@@ -23,18 +23,19 @@
         game.stage.addChildAt(this._graphicFill, 0);
 
         // Create the game texture
-        this._texture = new Phaser.RenderTexture(game, game.width, game.height);
+        this._texture = game.add.renderTexture(game.width, game.height);
         this._texture.renderXY(this._graphicFill, 0, 0);
 
         // After this is rendered to the texture, remove it
         game.stage.removeChild(this._graphicFill);
 
-        // After 2.4.8 (0,0) it's basically middle
-        if (Phaser.VERSION > PHASER_LEGACY) {
-            this._texture.renderXY(game.world, game.camera.position.x * -1, game.camera.position.y * -1);
-        } else {
-            this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
-        }
+        //If you try to renderXY() on game.world, game.world will get messed up big time. Then groups and sprites will render incorrectly
+        //INSTEAD, iterate over all children in game.world, and render their images to this._texture
+        game.world.children.forEach(
+          function(element){
+            this._texture.renderXY(element, element.x, element.y);
+          }.bind(this)
+        );
 
         // Get the image
         Phaser.Image.call(this, game, x || 0, y || 0, this._texture);
