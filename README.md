@@ -3,7 +3,7 @@ State Transition Plugin for Phaser
 [![npm version](https://badge.fury.io/js/phaser-state-transition.svg)](https://badge.fury.io/js/phaser-state-transition)
 
 ## About
-This plugin allows a [juicier](https://www.youtube.com/watch?v=Fy0aCDmgnxg) transition between states. A snapshot is taken of the current state, an 'out' transition runs, next state begins, another snapshot and 'in' transition occurs. Transitions occur through tweening.
+This plugin allows a [juicier](https://www.youtube.com/watch?v=Fy0aCDmgnxg) transition between states. A snapshot is taken of the current state, next state begins, an 'out' transition runs, another snapshot and 'in' transition occurs. Transitions occur through tweening.
 
 ## Installation
 
@@ -32,7 +32,7 @@ this.game.state.start('Game', Phaser.Plugin.StateTransition.Out.SlideTop, Phaser
 //Use only a default In transition
 this.game.state.start('Game', null, Phaser.Plugin.StateTransition.In.SlideRight );
 
-//Use only a default Out transition
+//Use a custom Out transition
 this.game.state.start('Game',
 {
  ease: Phaser.Easing.Exponential.InOut,
