@@ -24,18 +24,19 @@
         game.stage.addChildAt(this._graphicFill, 0);
 
         // Create the game texture
-        this._texture = new Phaser.RenderTexture(game, game.width, game.height);
+        this._texture = game.add.renderTexture(game.width, game.height);
         this._texture.renderXY(this._graphicFill, 0, 0);
 
         // After this is rendered to the texture, remove it
         game.stage.removeChild(this._graphicFill);
 
-        // After 2.4.8 (0,0) it's basically middle
-        if (Phaser.VERSION > PHASER_LEGACY) {
-            this._texture.renderXY(game.world, game.camera.position.x * -1, game.camera.position.y * -1);
-        } else {
-            this._texture.renderXY(game.world, game.width / 2 - game.camera.position.x, game.height / 2 - game.camera.position.y);
-        }
+        //If you try to renderXY() on game.world, game.world will get messed up big time. Then groups and sprites will render incorrectly
+        //INSTEAD, iterate over all children in game.world, and render their images to this._texture
+        game.world.children.forEach(
+          function(element){
+            this._texture.renderXY(element, element.x, element.y);
+          }.bind(this)
+        );
 
         // Get the image
         Phaser.Image.call(this, game, x || 0, y || 0, this._texture);
@@ -65,9 +66,9 @@
      * @author Cristian Bote <me@cristianbote.ro>
      * @param {object} game Phaser.Game instance
      */
-    function Slide(game) {
+    function Slide(game, contentSnapshot) {
         this.game = game;
-        this._contentSnapshot = new ContentSnapshot(game, 0, 0);
+        this._contentSnapshot = contentSnapshot || new ContentSnapshot(game);
         this._transition = new Transition(game);
     }
 
@@ -81,8 +82,28 @@
      */
     Slide.prototype.go = function(options) {
         this.game.stage.addChildAt(this._contentSnapshot, this.game.stage.children.length);
+        this.setOnComplete();
         this._transition.start(this._contentSnapshot, options);
     };
+
+    /**
+     * Sliding has finished
+     * @method
+     * @name setOnComplete
+     * @version 2.2.2
+     * @author James Lowrey <jtronlabs@gmail.com>
+     * @param {function} onCompleteAction Action to complete once the slide has finished
+     */
+    Slide.prototype.setOnComplete = function(onCompleteAction) {
+
+      this._transition.onComplete = function(){
+        this._contentSnapshot.destroy();
+        if(onCompleteAction) onCompleteAction();
+      }.bind(this);
+
+    };
+
+
 
     module.exports = Slide;
 }());
@@ -100,52 +121,48 @@
         Slide = require('./Slide'),
         ContentSnapshot = require('./ContentSnapshot');
 
-    function cleanup(children) {
-        var i = 0,
-            l = children.length;
-
-        for(; i < l; i += 1) {
-            if (children[i] && (children[i] instanceof ContentSnapshot)) {
-                children[i].destroy();
-            }
-        }
-    }
-
     function StateManagerStart(stateId, slideOutOptions, slideInOptions) {
-        var _slide,
+        var _exitSlide,
             _introSlide,
+            _exitSnapshot,
             _stateManager = this,
             _state = _stateManager.states[stateId],
             _args = [].slice.call(arguments),
             _cachedStateCreate = _state.create;
 
-        _stateManager.game.stage && cleanup(_stateManager.game.stage.children);
+        if (_stateManager.game.isBooted && (slideOutOptions || slideInOptions) ) {
+            //need to take a snapshot before the next state's create function, otherwise everything on screen will be wiped out and snapshot will be empty
+            if(slideOutOptions) _exitSnapshot = new ContentSnapshot(this.game);
 
-        if (_stateManager.game.isBooted && slideOutOptions) {
-            _slide = new Slide(this.game);
+            _state.create = function () {
+                //create next state. Do this before exit transition so that there is something to transition to (screen will not be empty).
+                _cachedStateCreate.call(this);
 
-            (function (_state, slideOutOptions, slideInOptions) {
-                _state.create = function () {
-                    _cachedStateCreate.call(this);
+                //slide out
+                if(slideOutOptions){
+                    _exitSlide = new Slide(this.game, _exitSnapshot);
+                    _exitSlide.go(slideOutOptions);
+                }
 
-                    // Slide in intro
-                    if (slideInOptions) {
-                        _introSlide = new Slide(_stateManager.game);
-                        _stateManager._created = false;
-                        _introSlide.go(slideInOptions);
+                // Snapshot and slide in intro
+                if (slideInOptions) {
+                    _introSlide = new Slide(_stateManager.game);
+                    _stateManager._created = false;
+                    this.game.world.alpha = 0; //hide world while transitioning
+                    _introSlide.go(slideInOptions);
 
-                        _introSlide._transition.onComplete = function () {
+                    _introSlide.setOnComplete(
+                        function(){
+                          console.log("complete")
+                            this.game.world.alpha = 1; //show world again once transition in finishes
                             _stateManager._created = true;
-                            cleanup(_stateManager.game.stage.children);
-                        };
-                    }
+                        }.bind(this)
+                    );
+                }
 
-                    _slide.go(slideOutOptions);
-
-                    // Put the original create back
-                    _state.create = _cachedStateCreate;
-                };
-            }(_state, slideOutOptions, slideInOptions));
+                // Put the original create back
+                _state.create = _cachedStateCreate;
+            };
         }
 
         // Start the cached state with the params for it

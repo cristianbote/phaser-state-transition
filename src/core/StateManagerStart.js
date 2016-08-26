@@ -10,52 +10,48 @@
         Slide = require('./Slide'),
         ContentSnapshot = require('./ContentSnapshot');
 
-    function cleanup(children) {
-        var i = 0,
-            l = children.length;
-
-        for(; i < l; i += 1) {
-            if (children[i] && (children[i] instanceof ContentSnapshot)) {
-                children[i].destroy();
-            }
-        }
-    }
-
     function StateManagerStart(stateId, slideOutOptions, slideInOptions) {
-        var _slide,
+        var _exitSlide,
             _introSlide,
+            _exitSnapshot,
             _stateManager = this,
             _state = _stateManager.states[stateId],
             _args = [].slice.call(arguments),
             _cachedStateCreate = _state.create;
 
-        _stateManager.game.stage && cleanup(_stateManager.game.stage.children);
+        if (_stateManager.game.isBooted && (slideOutOptions || slideInOptions) ) {
+            //need to take a snapshot before the next state's create function, otherwise everything on screen will be wiped out and snapshot will be empty
+            if(slideOutOptions) _exitSnapshot = new ContentSnapshot(this.game);
 
-        if (_stateManager.game.isBooted && slideOutOptions) {
-            _slide = new Slide(this.game);
+            _state.create = function () {
+                //create next state. Do this before exit transition so that there is something to transition to (screen will not be empty).
+                _cachedStateCreate.call(this);
 
-            (function (_state, slideOutOptions, slideInOptions) {
-                _state.create = function () {
-                    _cachedStateCreate.call(this);
+                //slide out
+                if(slideOutOptions){
+                    _exitSlide = new Slide(this.game, _exitSnapshot);
+                    _exitSlide.go(slideOutOptions);
+                }
 
-                    // Slide in intro
-                    if (slideInOptions) {
-                        _introSlide = new Slide(_stateManager.game);
-                        _stateManager._created = false;
-                        _introSlide.go(slideInOptions);
+                // Snapshot and slide in intro
+                if (slideInOptions) {
+                    _introSlide = new Slide(_stateManager.game);
+                    _stateManager._created = false;
+                    this.game.world.alpha = 0; //hide world while transitioning
+                    _introSlide.go(slideInOptions);
 
-                        _introSlide._transition.onComplete = function () {
+                    _introSlide.setOnComplete(
+                        function(){
+                          console.log("complete")
+                            this.game.world.alpha = 1; //show world again once transition in finishes
                             _stateManager._created = true;
-                            cleanup(_stateManager.game.stage.children);
-                        };
-                    }
+                        }.bind(this)
+                    );
+                }
 
-                    _slide.go(slideOutOptions);
-
-                    // Put the original create back
-                    _state.create = _cachedStateCreate;
-                };
-            }(_state, slideOutOptions, slideInOptions));
+                // Put the original create back
+                _state.create = _cachedStateCreate;
+            };
         }
 
         // Start the cached state with the params for it
