@@ -10,24 +10,27 @@
      * @param {object} game Game object instance
      * @param {number} x Offset of x
      * @param {number} y Offset of y
+     * @param {boolean} noStage Flag do skip rendering the stage for slider
      * @extend Phaser.Image
      */
-    function ContentSnapshot(game, x, y) {
-        // Create the game background fill
-        this._graphicFill = new Phaser.Graphics(game, 0, 0);
-        this._graphicFill.beginFill(game.stage.backgroundColor);
-        this._graphicFill.drawRect(0, 0, game.width, game.height);
-        this._graphicFill.endFill();
-
-        // Add the graphicFill object temporary to the stage at the base
-        game.stage.addChildAt(this._graphicFill, 0);
+    function ContentSnapshot(game, x, y, noStage) {
 
         // Create the game texture
         this._texture = new Phaser.RenderTexture(game, game.width, game.height);
-        this._texture.renderXY(this._graphicFill, 0, 0);
 
-        // After this is rendered to the texture, remove it
-        game.stage.removeChild(this._graphicFill);
+        if (!noStage) {
+            // Create the game background fill
+            this._graphicFill = new Phaser.Graphics(game, 0, 0);
+            this._graphicFill.beginFill(game.stage.backgroundColor);
+            this._graphicFill.drawRect(0, 0, game.width, game.height);
+            this._graphicFill.endFill();
+
+            // Add the graphicFill object temporary to the stage at the base
+            game.stage.addChildAt(this._graphicFill, 0);
+            this._texture.renderXY(this._graphicFill, 0, 0);
+            // After this is rendered to the texture, remove it
+            game.stage.removeChild(this._graphicFill);
+        }
 
         // After 2.4.8 (0,0) it's basically middle
         if (Phaser.VERSION > PHASER_LEGACY) {

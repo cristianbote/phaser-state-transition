@@ -32,7 +32,7 @@
         _stateManager.game.stage && cleanup(_stateManager.game.stage.children);
 
         if (_stateManager.game.isBooted && slideOutOptions) {
-            _slide = new Slide(this.game);
+            _slide = new Slide(this.game, slideOutOptions.noStage);
 
             (function (_state, slideOutOptions, slideInOptions) {
                 _state.create = function () {
@@ -40,7 +40,7 @@
 
                     // Slide in intro
                     if (slideInOptions) {
-                        _introSlide = new Slide(_stateManager.game);
+                        _introSlide = new Slide(_stateManager.game, slideInOptions.noStage);
                         _stateManager._created = false;
                         _introSlide.go(slideInOptions);
 
