@@ -12,5 +12,5 @@
 	// Override the default state.start
 	Phaser.StateManager.prototype.start = StateManagerStart;
 
-	module.exports = Phaser.Plugin.StateTransition;
+	module.exports = window.StateTransition = Phaser.Plugin.StateTransition;
 }());
