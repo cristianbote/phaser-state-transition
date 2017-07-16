@@ -25,7 +25,37 @@ Since we're talking about v2, there's been some changes. Now, the plugin basical
 game.state.start('playState', [outTransition, [inTransition]], clearWorld, clearCache, parameters);
 ```
 
-Notice the 2 optional params, that are transition config instances. There are several available by default, you should run this: `console.log(Phaser.Plugin.StateTransition.Out);` and `console.log(Phaser.Plugin.StateTransition.In);`. Obviously you could easily add your own nice transition as well.
+Notice the 2 optional params, that are transition config instances. There are several available by default, you should run this: `console.log(Phaser.Plugin.StateTransition.Out);` and `console.log(Phaser.Plugin.StateTransition.In);`. Obviously you could easily add your own nice transition as well. For example:
+
+```javascript
+game.state.start(
+ state, {
+  ease: Phaser.Easing.Exponential.InOut,
+   duration: 2500,
+   intro: false,
+   props: {
+    alpha: 0
+   }
+  }, {
+   ease: Phaser.Easing.Exponential.InOut,
+   duration: 2500,
+   intro: true,
+   props: {
+    alpha: 1
+   }
+  }
+);
+```
+
+The parameters `intro`, `duration`, `props` and `ease` are mandatory.
+- `intro` values should not be changed. 
+- `props` can be either an object `{alpha: 1, ...}` or a function returning an object:
+
+```javascript
+function(game){
+  return {alpha: 1, ...};
+}
+```
 
 ## Feedback
 If there's something you think it could be improved let me know, or create a pr.
