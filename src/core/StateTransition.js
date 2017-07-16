@@ -86,6 +86,14 @@
                     x: 2
                 })
             }
+        }),
+
+        fade: DefaultTransition({
+            intro: true,
+            props: {
+                alpha: 1
+            },
+			duration: 1500
         })
     };
 
@@ -136,6 +144,13 @@
                     x: 0
                 }
             }
+        }),
+
+        fade: DefaultTransition({
+            props: {
+                alpha: 0
+            },
+			duration: 1500
         })
     };
 
