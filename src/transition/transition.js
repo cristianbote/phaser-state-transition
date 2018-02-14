@@ -1,28 +1,19 @@
-(function(){
-    "use strict";
+/**
+ * Transition Class
+ * @constructor
+ * @name Transition
+ * @param {object} game Game instance
+ */
+export class Transition {
 
-    var raf = window.requestAnimationFrame;
-
-    /**
-     * Transition Class
-     * @constructor
-     * @name Transition
-     * @param {object} game Game instance
-     */
-    function Transition(game) {
+    constructor(game) {
         this.game = game;
         this.onComplete = null;
         this._tweens = [];
     }
 
-    /**
-     * Start the transition with a given target and options
-     * @name start
-     * @param target
-     * @param options
-     */
-    Transition.prototype.start = function(target, options) {
-        var prop,
+    start(target, options) {
+        let prop,
             _props = options.props,
             _isIntro = !!options.intro,
             _tweenTarget,
@@ -67,27 +58,24 @@
                 this._tweens.push(
                     this.game.add.tween(_tweenTarget)
                         [_isIntro ? 'from' : 'to'](
-                            _queue[prop],
-                            options.duration,
-                            options.ease,
-                            true,
-                            options.delay
-                        )
+                        _queue[prop],
+                        options.duration,
+                        options.ease,
+                        true,
+                        options.delay
+                    )
                 );
 
                 _tweenInstance = this._tweens[this._tweens.length - 1];
                 _tweenInstance.onComplete.addOnce(this._checkForComplete, this);
+                _tweenInstance.onLoop.addOnce(function () {
+                    console.log('progress', this);
+                }, this);
             }
         }
-    };
+    }
 
-    /**
-     * Verify complete state for transition
-     * @param target
-     * @param tween
-     * @private
-     */
-    Transition.prototype._checkForComplete = function(target, tween) {
+    _checkForComplete(target, tween) {
         var i = 0,
             l = this._tweens.length,
             _currentTween,
@@ -105,45 +93,21 @@
             this.onComplete && this.onComplete();
             this.currentTarget.destroy();
         }
-    };
+    }
 
-    /**
-     * Makes sure, before the transition starts, that we're doing fine
-     * property wise.
-     * @param props
-     * @private
-     */
-    Transition.prototype._prepareTargetForTweening = function(props) {
+    _prepareTargetForTweening(props) {
         if (props.hasOwnProperty('alpha')) {
             this.currentTarget.alpha = 0;
         }
-    };
-
-    /**
-     * Destroy handler
-     * @param target
-     */
-    Transition.prototype.destroy = function(target) {
-        target.destroy();
-    };
-
-    /**
-     * Stop handler
-     */
-    Transition.prototype.stop = function() {
-        this._active = false;
-        this.update();
-    };
-
-    /**
-     * Returns a unique identifier based in Date.now() stamp.
-     * Not that reliable.
-     * @returns {string}
-     * @private
-     */
-    function _getIdentifier() {
-        return Date.now().toString(22).substr(-4, 4);
     }
 
-    module.exports = Transition;
-}());
+    destroy(target) {
+        target.destroy();
+    }
+
+    stop() {
+        this._active = false;
+        this.update();
+    }
+
+}

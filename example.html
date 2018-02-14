@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        :root, html, body {
+            margin: 0;
+            padding: 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<script src="https://unpkg.com/phaser-ce@2.10.0/build/phaser.js"></script>
+<script src="dist/phaser-state-transition.umd.js"></script>
+
+<script>
+
+    const SlideLeftIn = {
+        ease: Phaser.Easing.Exponential.InOut,
+        duration: 2e3,
+        intro: true,
+        props: {
+            x: function(game) {
+                return game.width
+            }
+        }
+    };
+
+    const SlideLeftOut = {
+        ease: Phaser.Easing.Exponential.InOut,
+        duration: 2e3,
+        intro: false,
+        props: {
+            x: function(game) {
+                return -game.width
+            }
+        }
+    };
+
+    var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, document.body, {
+
+        create: function() {
+            var self = this;
+
+            this.stage.backgroundColor = Phaser.Color.getRandomColor();
+
+            var circle = this.game.add.graphics(0, 0);
+            circle.beginFill(Phaser.Color.getRandomColor(), 1);
+            circle.drawCircle(this.game.width / 2, this.game.height / 2, this.game.width / 2);
+
+            this.game.input.onTap.addOnce(function () {
+                const slideIn = SlideLeftIn;
+                const slideOut = SlideLeftOut;
+
+                if (slideIn) slideIn.duration = 2e3;
+                if (slideOut) slideOut.duration = 2e3;
+
+                this.game.state.start(
+                    this.game.state.current,
+                    slideOut,
+                    slideIn
+                );
+            });
+        }
+
+    });
+</script>
+</body>
+</html>

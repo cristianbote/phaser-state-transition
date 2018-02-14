@@ -1,16 +1,26 @@
-(function() {
-	"use strict";
+import { stateManagerStart } from "./core/state-manager-start";
 
-	var Slide = require('./core/Slide'),
-		StateManagerStart = require('./core/StateManagerStart'),
-		DefaultTransition = require('./transition/DefaultTransition');
+const cachedStart = Phaser.StateManager.prototype.start;
+Phaser.StateManager.prototype.start = function start(stateId, slideInOption, slideOut, ...args) {
+    stateManagerStart.call(this, stateId, slideInOption, slideOut);
+    cachedStart.call(this, stateId, ...args);
+};
 
+/**
+ * Creates a transition object
+ * @param options
+ * @returns {{ease: *, duration: number, intro: boolean, props: {}}}
+ */
+export const createTransition = (options) => {
+    return {
+        ease: options.ease || Phaser.Easing.Exponential.InOut,
+        duration: options.duration || 500,
+        intro: options.intro || false,
+        props: options.props || {}
+    }
+};
 
-    // Define the Plugin Class
-	Phaser.Plugin.StateTransition = require('./core/StateTransition');
+export default class StateTransition extends Phaser.Plugin {}
 
-	// Override the default state.start
-	Phaser.StateManager.prototype.start = StateManagerStart;
-
-	module.exports = window.StateTransition = Phaser.Plugin.StateTransition;
-}());
+// Expose the createTransition function
+StateTransition.createTransition = createTransition;

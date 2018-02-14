@@ -1,36 +1,33 @@
 {
   "name": "phaser-state-transition",
-  "version": "2.4.3",
+  "version": "2.5.0",
   "description": "Phaser state transition plugin",
-  "main": "index.js",
+  "main": "dist/phaser-state-transition.js",
+  "module": "dist/phaser-state-transition.m.js",
+  "umd:main": "dist/phaser-state-transition.umd.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:cristianbote/phaser-state-transition.git"
   },
   "files": [
     "index.js",
-    "dist/phaser-state-transition.js",
-    "dist/phaser-state-transition.min.js",
+    "dist",
     "README.md",
     "LICENSE.md"
   ],
   "keywords": [
     "phaser",
+    "plugin",
     "state",
     "transition"
   ],
   "scripts": {
-    "compile": "npm run build & npm run uglify",
-    "uglify": "uglifyjs dist/phaser-state-transition.js -o dist/phaser-state-transition.min.js -m",
-    "build": "browserify src/index.js -d -o dist/phaser-state-transition.js -v",
-    "watch": "watchify src/index.js -d -o dist/phaser-state-transition.js -v"
+    "build": "rm -rf dist; microbundle build --output dist --target browser --name StateTransition",
+    "watch": "microbundle watch --output dist --target browser --name StateTransition --entry src/index.js"
   },
   "author": "Cristian Bote <me@cristianbote.ro>",
   "license": "ISC",
   "devDependencies": {
-    "browserify": "^13.1.0",
-    "phaser-ce": "^2.7.2",
-    "uglify-js": "^2.7.3",
-    "watchify": "^3.7.0"
+    "microbundle": "^0.4.3"
   }
 }

@@ -12,10 +12,7 @@ Currently the switch between states is really static and a game should be able t
 https://codepen.io/cristianbote/full/GjgVxg
 
 ## How to use it
-You have several options here
-
-### Straight
-Just download the `dist/phaser-state-transition.min.js` file and you're done
+You have several options here including es6 imports.
  
 ### Npm
 
@@ -23,44 +20,47 @@ Just download the `dist/phaser-state-transition.min.js` file and you're done
 npm install phaser-state-transition --save
 ```
 
-## Usage
-Since we're talking about v2, there's been some changes. Now, the plugin basically overrides the create state method, so you could keep you're code the same, and just add transition configs where you see fit.
+And then import it in your project
 
 ```js
-const MenuState = {
-    create: () => {
-        let game = this;
-        let playButton;
-        
-        // Let's assume when the user taps on the window, we wanna change the state
-        this.game.input.onTap.addOnce(() => {
-            game.state.start(
-                'playState', // The play state
-                Phaser.Plugin.StateTransition.In.SlideLeft,
-                Phaser.Plugin.StateTransition.Out.SlideLeft
-            );
-        })
-    }
-};
-
-const PlayState = {
-    create: () => {
-        let game = this;
-        let playButton;
-        
-        // Let's assume when the user taps on the window, we wanna change the state
-        this.game.input.onTap.addOnce(() => {
-            game.state.start(
-                'menuState', // The menu state
-                Phaser.Plugin.StateTransition.In.SlideLeft,
-                Phaser.Plugin.StateTransition.Out.SlideLeft
-            );
-        })
-    }
-};
+import "phaser-state-transition";
 ```
 
-Notice the 2 optional params, that are transition config instances. There are several available by default, you should run this: `console.log(Phaser.Plugin.StateTransition.Out);` and `console.log(Phaser.Plugin.StateTransition.In);`. Obviously you could easily add your own nice transition as well.
+The plugin needs the `Phaser` framework to work, therefore you should make sure that this is included before the plugin's import.
+
+#### Straight but nor recommended
+Just download the `dist/phaser-state-transition.umd.js` file and you're done, but this is not the recommended way. You should use it via npm. You have better control on what version you're keeping locally.
+
+## Usage
+The easiest way to use it, is by just passing a transition for entering.
+
+```js
+import { createTransition } from "phaser-state-transition";
+
+const EnteringTransition = createTransition({
+    props: {
+        x: game => game.width
+    }
+});
+
+game.state.start("stateName", EnteringTransition);
+```
+
+The transition options to pass in are basically just some instructions for the plugin, to handle the _how_ of the transition. You'll find there are other properties inside, like ease, duration and other properties that are not that important to have nice transitions.
+
+## API
+
+### StateTransitionPlugin
+The plugin class. Normally you should not work on this class, but you could extend it if needed. The plugin does not need a class to be working. 
+
+### createTransition(options)
+This helper function, generates a transition object to be passed along the `game.state.start` method.
+
+The default duration would be `500ms` and the ease function `Phaser.Easing.Exponential.InOut`
+
+* `@param {object} options` The options to create a transition object
+* `@returns {object}` The transition object to be passed along the `game.start.state`
+
 
 ## Feedback
 If there's something you think it could be improved let me know, or create a pr.
