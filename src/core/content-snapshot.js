@@ -18,7 +18,7 @@ export class ContentSnapshot extends Phaser.Image {
      * @extend Phaser.Image
      */
     constructor(game, x, y, noStage) {
-        const texture = new Phaser.RenderTexture(game, game.width, game.height);
+        const texture = new Phaser.RenderTexture(game, game.width, game.height, "", game.renderer.resolution);
 
         super(game, x || 0, y || 0, texture);
 
