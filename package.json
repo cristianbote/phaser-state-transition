@@ -1,6 +1,6 @@
 {
   "name": "phaser-state-transition",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "Phaser state transition plugin",
   "main": "dist/phaser-state-transition.js",
   "module": "dist/phaser-state-transition.m.js",
